@@ -3,6 +3,7 @@ import { Event } from './event.model';
 
 export interface Booking {
   eventId: Types.ObjectId;
+  slug: string;
   email: string;
   createdAt: Date;
   updatedAt: Date;
@@ -14,6 +15,11 @@ const bookingSchema = new Schema<Booking>(
       type: Schema.Types.ObjectId,
       ref: 'Event',
       required: true,
+    },
+    slug: {
+      type: String,
+      required: true,
+      trim: true,
     },
     email: {
       type: String,

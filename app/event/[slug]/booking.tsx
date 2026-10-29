@@ -1,19 +1,47 @@
 'use client';
 
 import { useState } from 'react';
+import bookingEvents from '@/lib/booking.action';
 
-const Booking = () => {
+type BookingProps = {
+  eventId: string;
+  slug: string;
+  initialBookingCount: number;
+};
+
+const Booking = ({
+  eventId,
+  slug,
+  initialBookingCount,
+}: BookingProps) => {
   const [email, setEmail] = useState('');
-
   const [submit, setSubmit] = useState(false);
+  const [error, setError] = useState('');
+  const [numberOfBookedSpaces, setNumberOfBookedSpaces] =
+    useState(initialBookingCount);
 
-  const numberOfBookedSpaces = 20;
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setTimeout(() => {
+    setError('');
+
+    let result;
+    try {
+      result = await bookingEvents({
+        email,
+        eventId,
+        slug,
+      });
+    } catch {
+      setError('Booking failed. Please try again.');
+      return;
+    }
+
+    if (result.success) {
+      setNumberOfBookedSpaces((count) => count + 1);
       setSubmit(true);
-    }, 1000);
+    } else {
+      setError(result.error);
+    }
   };
   return (
     <section id="book-event">
@@ -40,6 +68,11 @@ const Booking = () => {
               }}
               placeholder="Enter your email address "
             />
+            {error && (
+              <p role="alert" className="text-red-400">
+                {error}
+              </p>
+            )}
             <button className="submit-button mt-3" type="submit">
               Submit
             </button>

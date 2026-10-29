@@ -5,6 +5,7 @@ import Link from 'next/link';
 import type { IEvent } from '@/database/event.model';
 import Booking from './booking';
 import { getSimilarEventsBySlug } from '@/lib/event.acton';
+import { getBookingCount } from '@/lib/booking-count';
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -15,6 +16,7 @@ type EventDetails = {
   imgsrc: string;
   imgalt: string;
 };
+type EventPageData = IEvent & { _id: string };
 
 async function EventContent({ params }: PageProps) {
   const { slug } = await params;
@@ -36,9 +38,12 @@ async function EventContent({ params }: PageProps) {
     throw new Error(`Failed to fetch event: ${response.status}`);
   }
 
-  const { event }: { event: IEvent } = await response.json();
+  const { event }: { event: EventPageData } = await response.json();
 
-  const similarEvents = await getSimilarEventsBySlug(slug);
+  const [similarEvents, bookingCount] = await Promise.all([
+    getSimilarEventsBySlug(slug),
+    getBookingCount(event._id),
+  ]);
 
   return (
     <main className="p-0">
@@ -137,55 +142,59 @@ async function EventContent({ params }: PageProps) {
                 </button>
               ))}
             </section>
-            <section className="gap-1.5 mt-4">
-              <h4 className="text-[22px] font-bold">Similar Events</h4>
-              <ul className="event grid grid-cols-3 gap-3">
-                {similarEvents.length > 0 &&
-                  similarEvents.map((event) => (
-                    <li key={event.slug} className="list-none mt-2">
-                      <Link href={`/event/${event.slug}`}>
-                        <img src={event.image} alt={event.title} />
-                        <div className="flex items-center gap-2 mt-4">
-                          <img
-                            src="../icons/pin.svg"
-                            alt="Location"
-                            className="h-4 w-4"
-                          />
-                          <p className="font-thin text-sm">{event.location}</p>
-                        </div>
-                        <h4 className="mt-1 text-base font-semibold">
-                          {event.title}
-                        </h4>
-                        <div className="mt-3 flex items-center gap-3 max-md:mb-5 mb-6">
-                          <div className="flex items-center gap-2 border-r border-solid pr-[10px] m-0">
-                            <img
-                              src="../icons/calendar.svg"
-                              alt="Date"
-                              className="h-4 w-4"
-                            />
-                            <p className="text-xs font-thin">{event.date}</p>
-                          </div>
-                          <div className="flex items-center gap-2 pl-[10px] m-0">
-                            <img
-                              src="../icons/clock.svg"
-                              alt="Time"
-                              className="h-4 w-4"
-                            />
-                            <p className="text-xs font-thin">{event.time}</p>
-                          </div>
-                        </div>
-                      </Link>
-                    </li>
-                  ))}
-              </ul>
-            </section>
           </div>
           <aside className="booking">
             <div className="signup-card">
-              <Booking />
+              <Booking
+                eventId={event._id}
+                slug={event.slug}
+                initialBookingCount={bookingCount}
+              />
             </div>
           </aside>
         </div>
+        <section className="gap-1.5 mt-4">
+          <h4 className="text-[22px] font-bold">Similar Events</h4>
+          <ul className="event grid grid-cols-3 max-md:grid-cols-2 gap-3">
+            {similarEvents.length > 0 &&
+              similarEvents.map((event) => (
+                <li key={event.slug} className="list-none mt-2">
+                  <Link href={`/event/${event.slug}`}>
+                    <img src={event.image} alt={event.title} />
+                    <div className="flex items-center gap-2 mt-4">
+                      <img
+                        src="../icons/pin.svg"
+                        alt="Location"
+                        className="h-4 w-4"
+                      />
+                      <p className="font-thin text-sm">{event.location}</p>
+                    </div>
+                    <h4 className="mt-1 text-base font-semibold">
+                      {event.title}
+                    </h4>
+                    <div className="mt-3 flex items-center gap-3 max-md:mb-5 mb-6">
+                      <div className="flex items-center gap-2 border-r border-solid pr-[10px] m-0">
+                        <img
+                          src="../icons/calendar.svg"
+                          alt="Date"
+                          className="h-4 w-4"
+                        />
+                        <p className="text-xs font-thin">{event.date}</p>
+                      </div>
+                      <div className="flex items-center gap-2 pl-[10px] m-0">
+                        <img
+                          src="../icons/clock.svg"
+                          alt="Time"
+                          className="h-4 w-4"
+                        />
+                        <p className="text-xs font-thin">{event.time}</p>
+                      </div>
+                    </div>
+                  </Link>
+                </li>
+              ))}
+          </ul>
+        </section>
       </section>
     </main>
   );

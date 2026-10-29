@@ -1,7 +1,5 @@
-import React from 'react';
+import FeaturedEvents from '../components/FeaturedEvents';
 
-const page = () => {
-  return <div>page</div>;
-};
-
-export default page;
+export default function EventsPage() {
+  return <FeaturedEvents title="All Events" />;
+}

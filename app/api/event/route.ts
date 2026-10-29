@@ -18,17 +18,33 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    await connectToDatabase();
-
-    const file = formData.get('image') as File;
-
-    if (!file)
+    const fileEntry = formData.get('image');
+    if (!(fileEntry instanceof File) || fileEntry.size === 0) {
       return NextResponse.json(
-        { message: 'Image file is required' },
+        { message: 'A valid image file is required' },
         { status: 400 }
       );
+    }
 
-    const arrayBuffer = await file.arrayBuffer();
+    const maxImageSize = 5 * 1024 * 1024;
+    if (fileEntry.size > maxImageSize) {
+      return NextResponse.json(
+        { message: 'Image must be 5 MB or smaller' },
+        { status: 400 }
+      );
+    }
+
+    const allowedImageTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!allowedImageTypes.includes(fileEntry.type)) {
+      return NextResponse.json(
+        { message: 'Image must be JPEG, PNG, or WebP' },
+        { status: 400 }
+      );
+    }
+
+    await connectToDatabase();
+
+    const arrayBuffer = await fileEntry.arrayBuffer();
 
     const buffer = Buffer.from(arrayBuffer);
 
