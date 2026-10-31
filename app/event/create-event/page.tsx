@@ -143,17 +143,17 @@ const Page = () => {
       </section>
       <section>
         <form
-          className="flex flex-col items-center mt-15"
+          className="flex w-full flex-col items-center mt-15"
           onSubmit={handleSubmit}
         >
           {eventFields.map((field) => (
-            <div className="mt-6" key={field.name}>
+            <div className="mt-6 w-120 max-md:w-full" key={field.name}>
               <label htmlFor={field.name} className="block">
                 {field.label}
               </label>
               {field.type === 'textarea' ? (
                 <textarea
-                  className="bg-white/3 rounded-[12px] px-5 py-2 border-white/20 border-[1px] w-120 mt-2 resize-none"
+                  className="bg-white/3 rounded-[12px] px-5 py-2 border-white/20 border-[1px] w-full mt-2 min-h-24 max-md:min-h-20 resize-none"
                   id={field.name}
                   name={field.name}
                   placeholder={field.placeholder}
@@ -162,7 +162,7 @@ const Page = () => {
                 />
               ) : field.type !== 'file' && field.type !== 'select' ? (
                 <input
-                  className="bg-white/3 rounded-[12px] px-5 py-1.5 border-white/20 border-[1px] w-120 mt-2"
+                  className="bg-white/3 rounded-[12px] px-5 py-1.5 border-white/20 border-[1px] w-full h-11 max-md:h-10 mt-2"
                   id={field.name}
                   name={field.name}
                   placeholder={field.placeholder}
@@ -172,7 +172,7 @@ const Page = () => {
               ) : field.type === 'file' ? (
                 <input
                   className="bg-white/3 rounded-[12px] px-5 py-2 border-white/20 
-                border-[1px] w-120 mt-2 file:bg-primary/10 file:text-primary
+                border-[1px] w-full h-11 max-md:h-10 mt-2 file:bg-primary/10 file:text-primary
                 file:mr-5 file:py-1.5 file:px-3 file:rounded-[10px]"
                   type={field.type}
                   id={field.name}
@@ -182,7 +182,7 @@ const Page = () => {
                 />
               ) : (
                 <select
-                  className="bg-white/3 rounded-[12px] px-5 py-1.5 border-white/20 border-[1px] w-120 mt-2"
+                  className="bg-white/3 rounded-[12px] px-5 py-1.5 border-white/20 border-[1px] w-full h-11 max-md:h-10 mt-2"
                   id={field.name}
                   name={field.name}
                   required
@@ -210,11 +210,11 @@ const Page = () => {
               {successMessage}
             </p>
           )}
-          <div className="mt-6">
+          <div className="mt-6 w-120 max-md:w-full">
             <button
               type="submit"
               disabled={isSubmitting}
-              className="bg-primary/20 text-primary font-bold w-120 py-2
+              className="bg-primary/20 text-primary font-bold w-full py-2
              rounded-[10px] border border-primary/30 hover:shadow-[0px_0px_20px_0px_color-mix(in_srgb,var(--primary)_60%,transparent)] hover:bg-primary/40"
             >
               {isSubmitting ? 'Creating Event...' : 'Create Event'}
