@@ -12,7 +12,7 @@ const page = () => {
         Hackathons, Meetups, and Conferneces, All in ONe Place
       </p>
       <ExploreBtn />
-      <FeaturedEvents />
+      <FeaturedEvents title="Featured Events" limit={3} />
     </section>
   );
 };

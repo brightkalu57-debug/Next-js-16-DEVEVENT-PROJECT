@@ -1,6 +1,6 @@
 import mongoose, { Model, Schema } from 'mongoose';
 
-export interface Event {
+export interface IEvent {
   title: string;
   slug: string;
   description: string;
@@ -17,6 +17,20 @@ export interface Event {
   tags: string[];
   createdAt: Date;
   updatedAt: Date;
+}
+
+export function normalizeArray(value: unknown): string[] {
+  const entries =
+    typeof value === 'string'
+      ? [value]
+      : Array.isArray(value)
+        ? value.filter((item): item is string => typeof item === 'string')
+        : [];
+
+  return entries
+    .flatMap((item) => item.split(/\r?\n/))
+    .map((item) => item.trim())
+    .filter(Boolean);
 }
 
 function createSlug(title: string): string {
@@ -73,7 +87,6 @@ function normalizeTime(value: string): string {
     }
 
     let hour = Number(match[1]);
-    1;
     const minute = Number(match[2]);
     const second = Number(match[3] ?? 0);
     const meridiem = match[4]?.toUpperCase();
@@ -98,7 +111,7 @@ function normalizeTime(value: string): string {
   return normalizedParts.join(' - ');
 }
 
-const eventSchema = new Schema<Event>(
+const eventSchema = new Schema<IEvent>(
   {
     title: { type: String, required: true, trim: true },
     slug: { type: String, required: true, trim: true },
@@ -113,6 +126,7 @@ const eventSchema = new Schema<Event>(
     audience: { type: String, required: true, trim: true },
     agenda: {
       type: [{ type: String, trim: true }],
+      set: normalizeArray,
       required: true,
       validate: {
         validator: (items: string[]) =>
@@ -123,6 +137,7 @@ const eventSchema = new Schema<Event>(
     organizer: { type: String, required: true, trim: true },
     tags: {
       type: [{ type: String, trim: true }],
+      set: normalizeArray,
       required: true,
       validate: {
         validator: (items: string[]) =>
@@ -158,5 +173,5 @@ eventSchema.pre('save', function () {
 
 eventSchema.index({ slug: 1 }, { unique: true });
 
-export const Event: Model<Event> =
-  mongoose.models.Event ?? mongoose.model<Event>('Event', eventSchema);
+export const Event: Model<IEvent> =
+  mongoose.models.Event ?? mongoose.model<IEvent>('Event', eventSchema);
