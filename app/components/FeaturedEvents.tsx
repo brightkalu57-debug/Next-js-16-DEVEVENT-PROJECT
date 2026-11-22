@@ -1,5 +1,6 @@
 import type { IEvent } from '@/database/event.model';
 import Link from 'next/link';
+import { connection } from 'next/server';
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -9,6 +10,7 @@ type FeaturedEventsProps = {
 };
 
 const FeaturedEvents = async ({ title, limit }: FeaturedEventsProps) => {
+  await connection();
   if (!BASE_URL) {
     throw new Error('NEXT_PUBLIC_BASE_URL is not configured');
   }
