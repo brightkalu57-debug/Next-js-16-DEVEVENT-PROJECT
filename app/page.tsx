@@ -1,4 +1,5 @@
 import ExploreBtn from './components/ExploreBtn';
+import { Suspense } from 'react';
 import FeaturedEvents from './components/FeaturedEvents';
 
 const page = () => {
