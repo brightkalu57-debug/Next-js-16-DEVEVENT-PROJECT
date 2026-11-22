@@ -1,4 +1,5 @@
 import FeaturedEvents from '../components/FeaturedEvents';
+import { Suspense } from 'react';
 
 export default function EventsPage() {
   return (
