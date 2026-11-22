@@ -12,7 +12,9 @@ const page = () => {
         Hackathons, Meetups, and Conferneces, All in ONe Place
       </p>
       <ExploreBtn />
+     <Suspense fallback={<p style={{ color: '#a1a1aa' }}>Loading upcoming events...</p>}>
       <FeaturedEvents title="Featured Events" limit={3} />
+     </Suspense>
     </section>
   );
 };
