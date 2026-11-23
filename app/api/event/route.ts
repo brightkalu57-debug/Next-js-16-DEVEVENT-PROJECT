@@ -52,7 +52,8 @@ export async function POST(req: NextRequest) {
       cloudinary.uploader
         .upload_stream(
           { resource_type: 'image', folder: 'DevEvents', api_key: process.env.CLOUDINARY_API_KEY,
-            api_secret: process.env.CLOUDINARY_API_SECRET, cloud_name: process.env.CLOUDINARY_CLOUD_NAME},
+            api_secret: process.env.CLOUDINARY_API_SECRET, cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
+            upload_preset: 'my-nextJS-website'},
           (error, results) => {
             if (error) return reject(error);
 
